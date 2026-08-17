@@ -1,0 +1,21 @@
+{
+  "name": "swaglabstest",
+  "version": "1.0.0",
+  "description": "E2E tests of https://www.saucedemo.com/",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wojtar01/SwagLabsTest.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/wojtar01/SwagLabsTest/issues"
+  },
+  "homepage": "https://github.com/wojtar01/SwagLabsTest#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0"
+  }
+}
