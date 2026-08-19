@@ -4,6 +4,7 @@ import { inventoryPage } from '../pages/inventory.page';
 import { cartPage } from '../pages/cart.page.ts';
 import { checkoutStepOnePage } from '../pages/checkoutStepOne.page';
 import { checkoutStepTwoPage } from '../pages/checkoutStepTwo.page';
+import { checkoutCompletePage } from '../pages/checkoutComplete.page';
 import { login, password,firstName ,lastName ,postalCode } from '../test-data/test.data';
 
 test('E2E Test', async ({ page }) => {
@@ -22,4 +23,7 @@ test('E2E Test', async ({ page }) => {
 
   const CheckoutStepTwoPage = new checkoutStepTwoPage(page);
   await CheckoutStepTwoPage.finish();
+
+  const CheckoutCompletePage = new checkoutCompletePage(page);
+  await CheckoutCompletePage.confirmSale();
 });
