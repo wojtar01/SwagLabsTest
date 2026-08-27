@@ -1,9 +1,13 @@
-class checkoutStepTwoPage {
-  constructor(private page: any) {}
+import { Page, Locator } from '@playwright/test';
+
+export class CheckoutStepTwoPage {
+  private readonly finishButton: Locator;
+
+  constructor(private page: Page) {
+    this.finishButton = this.page.locator('[data-test="finish"]');
+  }
 
   async finish() {
-  await this.page.locator('[data-test="finish"]').click();
+    await this.finishButton.click();
   }
 }
-
-export { checkoutStepTwoPage };

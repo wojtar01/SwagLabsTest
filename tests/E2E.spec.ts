@@ -1,29 +1,30 @@
 import { test, expect } from '@playwright/test';
-import { loginPage} from '../pages/login.page';
-import { inventoryPage } from '../pages/inventory.page';
-import { cartPage } from '../pages/cart.page.ts';
-import { checkoutStepOnePage } from '../pages/checkoutStepOne.page';
-import { checkoutStepTwoPage } from '../pages/checkoutStepTwo.page';
-import { checkoutCompletePage } from '../pages/checkoutComplete.page';
-import { login, password,firstName ,lastName ,postalCode } from '../test-data/test.data';
+import { LoginPage } from '../pages/login.page';
+import { InventoryPage } from '../pages/inventory.page';
+import { CartPage } from '../pages/cart.page';
+import { CheckoutStepOnePage } from '../pages/checkoutStepOne.page';
+import { CheckoutStepTwoPage } from '../pages/checkoutStepTwo.page';
+import { CheckoutCompletePage } from '../pages/checkoutComplete.page';
+import { login, password, firstName, lastName, postalCode } from '../test-data/test.data';
 
 test('E2E Test', async ({ page }) => {
 
-  const LoginPage = new loginPage(page);
-  await LoginPage.login(login, password);
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(login, password);
 
-  const InventoryPage = new inventoryPage(page);
-  await InventoryPage.addItemsToCart();
+  const inventoryPage = new InventoryPage(page);
+  await inventoryPage.addItemsToCart();
   
-  const CartPage = new cartPage(page);
-  await CartPage.checkout();
+  const cartPage = new CartPage(page);
+  await cartPage.checkout();
   
-  const CheckoutStepOnePage = new checkoutStepOnePage(page);
-  await CheckoutStepOnePage.fillCheckoutInfo(firstName, lastName, postalCode);
+  const checkoutStepOnePage = new CheckoutStepOnePage(page);
+  await checkoutStepOnePage.fillCheckoutInfo(firstName, lastName, postalCode);
 
-  const CheckoutStepTwoPage = new checkoutStepTwoPage(page);
-  await CheckoutStepTwoPage.finish();
+  const checkoutStepTwoPage = new CheckoutStepTwoPage(page);
+  await checkoutStepTwoPage.finish();
 
-  const CheckoutCompletePage = new checkoutCompletePage(page);
-  await CheckoutCompletePage.confirmSale();
+  const checkoutCompletePage = new CheckoutCompletePage(page);
+  await checkoutCompletePage.confirmSale();
 });

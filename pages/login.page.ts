@@ -1,12 +1,24 @@
-class loginPage {
-  constructor(private page: any) {}
+import { Page, Locator } from '@playwright/test';
 
-  async login(login: string, password: string) {
+export class LoginPage {
+
+  private readonly usernameInput: Locator;
+  private readonly passwordInput: Locator;
+  private readonly loginButton: Locator;
+
+  constructor(private page: Page) {
+    this.usernameInput = this.page.locator('[data-test="username"]');
+    this.passwordInput = this.page.locator('[data-test="password"]');
+    this.loginButton = this.page.locator('[data-test="login-button"]');
+  }
+
+  async goto() {
     await this.page.goto('https://www.saucedemo.com/');
-    await this.page.locator('[data-test="username"]').fill(login);
-    await this.page.locator('[data-test="password"]').fill(password);
-    await this.page.locator('[data-test="login-button"]').click();
+  }
+
+  async login(username: string, password: string) {
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
   }
 }
-
-export { loginPage };
