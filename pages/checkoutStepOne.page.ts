@@ -1,16 +1,18 @@
 import { Page, Locator } from '@playwright/test';
 
 export class CheckoutStepOnePage {
-  private readonly firstNameInput: Locator;
-  private readonly lastNameInput: Locator;
-  private readonly postalCodeInput: Locator;
-  private readonly continueButton: Locator;
+  readonly firstNameInput: Locator;
+  readonly lastNameInput: Locator;
+  readonly postalCodeInput: Locator;
+  readonly continueButton: Locator;
+  readonly errorMessage: Locator;
 
   constructor(private page: Page) {
     this.firstNameInput = this.page.locator('[data-test="firstName"]');
     this.lastNameInput = this.page.locator('[data-test="lastName"]');
     this.postalCodeInput = this.page.locator('[data-test="postalCode"]');
     this.continueButton = this.page.locator('[data-test="continue"]');
+    this.errorMessage = this.page.locator('[data-test="error"]');
   }
 
   async fillCheckoutInfo(firstName: string, lastName: string, postalCode: string) {

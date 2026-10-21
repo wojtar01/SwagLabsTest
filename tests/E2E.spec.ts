@@ -1,30 +1,64 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { InventoryPage } from '../pages/inventory.page';
-import { CartPage } from '../pages/cart.page';
-import { CheckoutStepOnePage } from '../pages/checkoutStepOne.page';
-import { CheckoutStepTwoPage } from '../pages/checkoutStepTwo.page';
-import { CheckoutCompletePage } from '../pages/checkoutComplete.page';
-import { login, password, firstName, lastName, postalCode } from '../test-data/test.data';
+import { test, expect } from '../fixtures/page.fixture';
+import { USER_CREDENTIALS, CHECKOUT_DATA } from '../test-data/test.data';
 
-test('E2E Test', async ({ page }) => {
+test.describe('E2E - Purchase Flow', () => {
+  test('Powinien pomyślnie przejść pełną ścieżkę zakupu produktów', async ({
+    page,
+    loginPage,
+    inventoryPage,
+    cartPage,
+    checkoutStepOnePage,
+    checkoutStepTwoPage,
+    checkoutCompletePage,
+  }) => {
 
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login(login, password);
+    await test.step('1. Logowanie do serwisu Swag Labs', async () => {
+      await loginPage.goto();
+      await loginPage.login(
+        USER_CREDENTIALS.standardUser.username,
+        USER_CREDENTIALS.standardUser.password
+      );
+      await expect(page).toHaveURL(/.*inventory.html/);
+      await expect(inventoryPage.pageTitle).toHaveText('Products');
+    });
 
-  const inventoryPage = new InventoryPage(page);
-  await inventoryPage.addItemsToCart();
-  
-  const cartPage = new CartPage(page);
-  await cartPage.checkout();
-  
-  const checkoutStepOnePage = new CheckoutStepOnePage(page);
-  await checkoutStepOnePage.fillCheckoutInfo(firstName, lastName, postalCode);
+    await test.step('2. Dodanie produktów do koszyka i przejście do koszyka', async () => {
+      await inventoryPage.addBackpackToCart();
+      await inventoryPage.addBikeLightToCart();
+      await expect(inventoryPage.shoppingCartBadge).toHaveText('2');
+      await inventoryPage.goToCart();
+      await expect(page).toHaveURL(/.*cart.html/);
+    });
 
-  const checkoutStepTwoPage = new CheckoutStepTwoPage(page);
-  await checkoutStepTwoPage.finish();
+    await test.step('3. Weryfikacja zawartości koszyka i przejście do kasy', async () => {
+      await expect(cartPage.cartItems).toHaveCount(2);
+      await cartPage.checkout();
+      await expect(page).toHaveURL(/.*checkout-step-one.html/);
+    });
 
-  const checkoutCompletePage = new CheckoutCompletePage(page);
-  await checkoutCompletePage.confirmSale();
+    await test.step('4. Wypełnienie danych adresowych kupującego', async () => {
+      await checkoutStepOnePage.fillCheckoutInfo(
+        CHECKOUT_DATA.firstName,
+        CHECKOUT_DATA.lastName,
+        CHECKOUT_DATA.postalCode
+      );
+      await expect(page).toHaveURL(/.*checkout-step-two.html/);
+    });
+
+    await test.step('5. Weryfikacja podsumowania i sfinalizowanie zamówienia', async () => {
+      await expect(checkoutStepTwoPage.cartItems).toHaveCount(2);
+      await expect(checkoutStepTwoPage.summaryTotal).toBeVisible();
+      await checkoutStepTwoPage.finish();
+      await expect(page).toHaveURL(/.*checkout-complete.html/);
+    });
+
+    await test.step('6. Potwierdzenie pomyślnego złożenia zamówienia', async () => {
+      await expect(checkoutCompletePage.ponyExpressImage).toBeVisible();
+      await expect(checkoutCompletePage.completeHeader).toHaveText('Thank you for your order!');
+      await expect(checkoutCompletePage.completeText).toContainText(
+        'Your order has been dispatched, and will arrive just as fast as the pony can get there!'
+      );
+      await expect(checkoutCompletePage.backHomeButton).toBeVisible();
+    });
+  });
 });
